@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Migrations\BaseMigration;
 
-class CreateUsersTable extends BaseMigration
+class CreateProductCategoriesTable extends BaseMigration
 {
     /**
      * Change Method.
@@ -13,12 +13,11 @@ class CreateUsersTable extends BaseMigration
      */
     public function change(): void
     {
-        $table = $this->table('users');
-        $table->addColumn('login', 'string')
-            ->addColumn('password', 'string')
+        $table = $this->table('product_categories');
+        $table->addColumn('category_id', 'integer')
+            ->addColumn('product_id', 'integer')
             ->addColumn('created', 'datetime')
             ->addColumn('modified', 'datetime')
-            ->addIndex(['login'], ['unique' => true])
             ->create();
     }
 }

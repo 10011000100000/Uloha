@@ -1,31 +1,31 @@
 <?php
-$this->assign('title', 'Dashboard');
+$this->assign('title', 'Product management');
 ?>
 <div class="users index content">
-    <?= $this->Html->link(__('New User'), ['action' => 'add'], ['class' => 'button float-right']); ?>
-    <h3><?= __('Users'); ?></h3>
+    <?= $this->Html->link(__('New Product'), ['action' => 'add'], ['class' => 'button float-right']); ?>
+    <h3><?= __('Products'); ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id'); ?></th>
-                    <th><?= $this->Paginator->sort('login'); ?></th>
+                    <th><?= $this->Paginator->sort('name'); ?></th>
                     <th><?= $this->Paginator->sort('created'); ?></th>
                     <th><?= $this->Paginator->sort('modified'); ?></th>
                     <th class="actions"><?= __('Actions'); ?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($users as $user) { ?>
+                <?php foreach ($products as $product) { ?>
                 <tr>
-                    <td><?= $this->Number->format($user->id); ?></td>
-                    <td><?= h($user->login); ?></td>
-                    <td><?= h($user->created); ?></td>
-                    <td><?= h($user->modified); ?></td>
+                    <td><?= $this->Number->format($product->id); ?></td>
+                    <td><?= h($product->name); ?></td>
+                    <td><?= h($product->created); ?></td>
+                    <td><?= h($product->modified); ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]); ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]); ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete user {0} #{1}?', $user->login, $user->id)]); ?>
+                    <?= $this->Html->link(__('View'), ['action' => 'view', $product->id]); ?>
+                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id]); ?>
+                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete product {0} #{1}?', $product->name, $product->id)]); ?>
                     </td>
                 </tr>
                 <?php } ?>

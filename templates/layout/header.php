@@ -6,7 +6,7 @@
     <title><?= $this->fetch('title'); ?></title>
     <?= $this->Html->meta('icon'); ?>
 
-    <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake']); ?>
+    <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake', 'custom']); ?>
 
     <?= $this->fetch('meta'); ?>
     <?= $this->fetch('css'); ?>
@@ -23,7 +23,7 @@
                     echo $this->Html->link(__('Sign Up'), ['controller' => 'Users', 'action' => 'signup']);
                 } elseif ($logged_in) {
                     echo $this->Html->link(__('Log Out'), ['controller' => 'Users', 'action' => 'logout']);
-                    echo $this->Html->link(__('Dashboard'), ['controller' => 'Users', 'action' => 'index']);
+                    echo $this->Html->link(__('Dashboard'), ['controller' => 'Pages', 'action' => 'dashboard']);
                 }
     ?>
         </div>
