@@ -28,7 +28,8 @@
 }
 
 .product_image {
-    width: 300px;
+    max-width: 300px;
+    max-height: 300px;
 }
 
 .active {
@@ -53,11 +54,12 @@
 .addToCart {
     background-color: #2f85ae;
     border-radius: 10px;
-    height: fit-content;
     color: white;
     white-space: nowrap;
-    padding: 2.5px 5px;
+    padding: 0 5px;
     margin-left: 5px;
+    border: none;
+    transition: background .3s;
 }
 
 #cart {

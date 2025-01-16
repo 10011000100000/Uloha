@@ -19,11 +19,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Cake\Core\Configure;
-use Cake\Http\Exception\ForbiddenException;
-use Cake\Http\Exception\NotFoundException;
-use Cake\Http\Response;
-use Cake\View\Exception\MissingTemplateException;
+use Riesenia\Cart\Cart;
 
 /**
  * Static content controller.
@@ -34,47 +30,53 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PagesController extends AppController
 {
-    /**
-     * Displays a view.
-     *
-     * @param string ...$path Path segments.
-     *
-     * @throws \Cake\Http\Exception\ForbiddenException       when a directory traversal attempt
-     * @throws \Cake\View\Exception\MissingTemplateException when the view file could not
-     *                                                       be found and in debug mode
-     * @throws \Cake\Http\Exception\NotFoundException        when the view file could not
-     *                                                       be found and not in debug mode
-     * @throws \Cake\View\Exception\MissingTemplateException in debug mode
-     */
-    public function display(string ...$path): ?Response
+    public function beforeFilter(\Cake\Event\EventInterface $event)
     {
-        if (!$path) {
-            return $this->redirect('/');
+        parent::beforeFilter($event);
+        $this->FormProtection->setConfig('validate', false);
+    }
+
+    /**
+     * @return \Cake\Http\Response|void|null
+     */
+    public function index()
+    {
+        if (!$this->request->getSession()->read('Cart')) {
+            $this->request->getSession()->write('Cart', new Cart());
         }
 
-        if (\in_array('..', $path, true) || \in_array('.', $path, true)) {
-            throw new ForbiddenException();
-        }
-        $page = $subpage = null;
+        $cart = $this->request->getSession()->read('Cart');
 
-        if (!empty($path[0])) {
-            $page = $path[0];
+        $cart = (object) [
+            'subtotal' => $cart->getSubtotal(),
+            'vat' => $cart->getTaxes(),
+            'total' => $cart->getTotal()
+        ];
+        $this->set(\compact('cart'));
+
+        $query = $this->fetchTable('Categories')->find();
+        $categories = $this->paginate($query);
+
+        $this->set(\compact('categories'));
+
+        $query = $this->fetchTable('Products')->find()->select(['id', 'name', 'price', 'vat', 'img']);
+
+        if (!$this->request->getQuery('category')) {
+            $products = $this->paginate($query);
+        } else {
+            $query->join([
+                'a' => [
+                    'table' => 'product_categories',
+                    'type' => 'left',
+                    'conditions' => 'Products.id = a.product_id'
+                ]
+            ])
+                ->where(['a.category_id' => $this->request->getQuery('category')]);
+
+            $products = $this->paginate($query);
         }
 
-        if (!empty($path[1])) {
-            $subpage = $path[1];
-        }
-        $this->set(\compact('page', 'subpage'));
-
-        try {
-            return $this->render(\implode('/', $path));
-        } catch (MissingTemplateException $exception) {
-            if (Configure::read('debug')) {
-                throw $exception;
-            }
-
-            throw new NotFoundException();
-        }
+        $this->set(\compact('products'));
     }
 
     /**
@@ -82,5 +84,27 @@ class PagesController extends AppController
      */
     public function dashboard()
     {
+    }
+
+    /**
+     * @param string|null $id
+     *
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function addtocart($id = null)
+    {
+        $this->request->allowMethod(['post']);
+
+        $product = $this->fetchTable('Products')->get($id);
+        $_SESSION['Cart']->addItem($product, 1);
+
+        $cart = [
+            'subtotal' => (string) $_SESSION['Cart']->getSubtotal(),
+            'total' => (string) $_SESSION['Cart']->getTotal()
+        ];
+
+        return $this->response->withType('application/json')->withStringBody((string) \json_encode($cart));
     }
 }

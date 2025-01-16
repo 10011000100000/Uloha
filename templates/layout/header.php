@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')); ?>
     <?= $this->Html->charset(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $this->fetch('title'); ?></title>
     <?= $this->Html->meta('icon'); ?>
 
     <?= $this->Html->css(['normalize.min', 'milligram.min', 'fonts', 'cake', 'custom']); ?>
-
-    <?= $this->fetch('meta'); ?>
-    <?= $this->fetch('css'); ?>
+    <?= $this->Html->script(['app']); ?>
 </head>
 <body>
     <nav class="top-nav">
