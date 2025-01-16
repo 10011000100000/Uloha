@@ -76,4 +76,11 @@ class PagesController extends AppController
             throw new NotFoundException();
         }
     }
+
+    /**
+     * @return \Cake\Http\Response|void|null
+     */
+    public function dashboard()
+    {
+    }
 }
