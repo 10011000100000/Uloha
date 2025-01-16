@@ -22,12 +22,7 @@ namespace App\Controller;
 use Cake\Controller\Controller;
 
 /**
- * Application Controller.
- *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
- *
- * @see https://book.cakephp.org/4/en/controllers.html#the-app-controller
+ * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  */
 class AppController extends Controller
 {
@@ -44,10 +39,20 @@ class AppController extends Controller
 
         $this->loadComponent('Flash');
 
+        $this->viewBuilder()->setLayout('header');
+
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
-        // $this->loadComponent('FormProtection');
+        $this->loadComponent('FormProtection');
+
+        $this->loadComponent('Authentication.Authentication');
+
+        if ($this->Authentication->getIdentifier()) {
+            $this->set('logged_in', true);
+        } else {
+            $this->set('logged_in', false);
+        }
     }
 }
